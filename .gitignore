@@ -15,7 +15,7 @@ CTestTestfile.cmake
 build*
 
 # QT Creator 
-CmakeLists.txt.user*
+CMakeLists.txt.user*
 *.autosave
 *.moc
 *build-*
