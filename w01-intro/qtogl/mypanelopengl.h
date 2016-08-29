@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include <QtOpenGL>
 
-class MyPanelOpenGL : public QGLWidget
+class MyPanelOpenGL : public QOpenGLWidget
 {
     Q_OBJECT
 

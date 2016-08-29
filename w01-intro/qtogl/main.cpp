@@ -1,14 +1,18 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <QGLFormat>
+#include <QSurfaceFormat>
 
 int main(int argc, char *argv[])
 {
-    /*TODO: Set format before initializing application*/
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    
-    return a.exec();
+	QApplication a(argc, argv);
+	QSurfaceFormat format;
+	format.setVersion(4,1);
+	/* TODO: what is not core? */
+	//format.setProfile(QSurfaceFormat::CoreProfile);
+	QSurfaceFormat::setDefaultFormat(format);
+	MainWindow w;
+	w.show();
+
+	return a.exec();
 }

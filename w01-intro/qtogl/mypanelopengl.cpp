@@ -1,8 +1,9 @@
 #include "mypanelopengl.h"
 #include <cmath>
+#include <iostream>
 
 MyPanelOpenGL::MyPanelOpenGL(QWidget *parent) :
-    QGLWidget(parent) {
+    QOpenGLWidget(parent) {
 
     shaderProgram=NULL;
     vertexShader=NULL;
