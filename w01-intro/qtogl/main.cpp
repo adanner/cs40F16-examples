@@ -8,8 +8,7 @@ int main(int argc, char *argv[])
 	QApplication a(argc, argv);
 	QSurfaceFormat format;
 	format.setVersion(4,1);
-	/* TODO: what is not core? */
-	//format.setProfile(QSurfaceFormat::CoreProfile);
+	format.setProfile(QSurfaceFormat::CoreProfile);
 	QSurfaceFormat::setDefaultFormat(format);
 	MainWindow w;
 	w.show();

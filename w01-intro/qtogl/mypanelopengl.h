@@ -6,36 +6,38 @@
 
 class MyPanelOpenGL : public QOpenGLWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
-protected:
-    void initializeGL();
-    void resizeGL(int w, int h);
-    void paintGL();
+	protected:
+		void initializeGL();
+		void resizeGL(int w, int h);
+		void paintGL();
 
-public:
-    explicit MyPanelOpenGL(QWidget *parent = 0);
-    virtual ~MyPanelOpenGL();
+	public:
+		explicit MyPanelOpenGL(QWidget *parent = 0);
+		virtual ~MyPanelOpenGL();
 
-private:
-    void createVBOs();
-    void destroyVBOs();
-    void createShaders();
-    void destroyShaders();
+	private:
+		void createVBOs();
+		void destroyVBOs();
+		void createShaders();
+		void destroyShaders();
 
 
-    unsigned int numVertices;
-    QVector4D *vertices;
+		unsigned int numVertices;
+		QVector4D *vertices;
 
-    QOpenGLBuffer *vboVertices;
+		/* VAO required in core profile */
+		QOpenGLVertexArrayObject *vao;
+		QOpenGLBuffer *vboVertices;
 
-    QOpenGLShader *vertexShader;
-    QOpenGLShader *fragmentShader;
-    QOpenGLShaderProgram *shaderProgram;
+		QOpenGLShader *vertexShader;
+		QOpenGLShader *fragmentShader;
+		QOpenGLShaderProgram *shaderProgram;
 
 signals:
-    
-public slots:
+
+		public slots:
 
 };
 
