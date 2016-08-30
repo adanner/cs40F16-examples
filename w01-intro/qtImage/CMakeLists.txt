@@ -9,7 +9,7 @@ set(QTHDRS
 set(QTFORMS mainwindow.ui)
 
 #Run qt tools to auto generate C++ compatible files
-QT5_WRAP_CPP(QTHDRS_MOC ${QTHDRS})
+#QT5_WRAP_CPP(QTHDRS_MOC ${QTHDRS})
 QT5_WRAP_UI(QTFORMS_HDRS ${QTFORMS})
 SET(MYQTFILES ${QTHDRS_MOC} ${QTFORMS_HDRS})
 

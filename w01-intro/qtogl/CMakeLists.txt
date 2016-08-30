@@ -10,7 +10,7 @@ set(QTHDRS
 set(QTFORMS mainwindow.ui)
 
 #Run qt tools to auto generate C++ compatible files
-QT5_WRAP_CPP(QTHDRS_MOC ${QTHDRS})
+#QT5_WRAP_CPP(QTHDRS_MOC ${QTHDRS})
 QT5_WRAP_UI(QTFORMS_HDRS ${QTFORMS})
 SET(MYQTFILES ${QTHDRS_MOC} ${QTFORMS_HDRS})
 
@@ -30,8 +30,8 @@ set(SHADERS
 # main executable
 ADD_EXECUTABLE(qtogl ${SRC} ${MYQTFILES} ${SHADERS})
 
-TARGET_LINK_LIBRARIES(qtogl ${EXT_LIBS})
-qt5_use_modules(qtogl OpenGL Widgets)
+TARGET_LINK_LIBRARIES(qtogl ${EXT_LIBS} Qt5::Widgets Qt5::OpenGL)
+#qt5_use_modules(qtogl OpenGL Widgets)
 
 #link shaders folder to build directory
 symlink_data(qtogl_shaders shaders)
