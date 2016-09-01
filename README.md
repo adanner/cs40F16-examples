@@ -19,4 +19,5 @@ cd w01-intro/qtogl
 # TODO
   - [X] Add basic description
   - [X] Provide OSX Notes
+  - [ ] Add macport notes
   - [ ] Provide Ubuntu Notes
