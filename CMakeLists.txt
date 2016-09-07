@@ -37,4 +37,5 @@ INCLUDE_DIRECTORIES(
   ) 
 #things to actually build
 add_subdirectory(w01-intro)
+add_subdirectory(w02-opengl)
 
