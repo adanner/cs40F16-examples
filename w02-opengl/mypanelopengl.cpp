@@ -39,9 +39,12 @@ void MyPanelOpenGL::initializeGL()
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     createShaders();
     createVBOs();
+    setupVAO();
     timer = new QTimer(this);
+    //* 
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
-    timer->start(30); /* trigger every 30ms */
+    timer->start(30); // trigger every 30ms 
+    // */
 }
 
 void MyPanelOpenGL::step()
@@ -69,20 +72,36 @@ void MyPanelOpenGL::paintGL(){
         return;
     }
 
+    vao->bind();
+    shaderProgram->bind();
+    shaderProgram->setUniformValue("color",QVector4D(0.,0.7,0.,1.));
+    shaderProgram->setUniformValue("displacement",displacement); 
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    
+    glFlush();
+    shaderProgram->release();
+    vao->release();
+
+}
+
+void MyPanelOpenGL::setupVAO(){
+    /* The VAO remembers the connections between VBOs, shader
+     * variables, and buffer layout */
+    if(!vboVertices or !shaderProgram->isLinked()){
+        return;
+    }
+
+    vao->bind();
     shaderProgram->bind();
     vboVertices->bind();
-
     shaderProgram->enableAttributeArray("vPosition");
     shaderProgram->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4, 0);
-    shaderProgram->setUniformValue("color",QVector4D(0.,0.7,0.,1.));
-    shaderProgram->setUniformValue("displacement",displacement);
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
-
-    glFlush();
-
-    vboVertices->release();
     shaderProgram->release();
+    vao->release();
+
+
 }
+
 
 void MyPanelOpenGL::createShaders(){
 
@@ -126,7 +145,6 @@ void MyPanelOpenGL::createVBOs(){
 
     vao = new QOpenGLVertexArrayObject(this);
     vao->create();
-    vao->bind();
     vboVertices = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     vboVertices->create();
     vboVertices->bind();

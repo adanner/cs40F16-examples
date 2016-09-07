@@ -18,10 +18,11 @@ public:
     virtual ~MyPanelOpenGL();
 
 private:
-    void createVBOs();
-    void destroyVBOs();
+    void setupVAO();
     void createShaders();
     void destroyShaders();
+    void createVBOs();
+    void destroyVBOs();
 
 
     unsigned int numVertices;
