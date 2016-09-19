@@ -14,8 +14,8 @@ MyPanelOpenGL::MyPanelOpenGL(QWidget *parent) :
     m_vertexShader=NULL;
     m_fragmentShader=NULL;
     m_texture = NULL;
-
     m_sphere = NULL;
+    m_cull = false;
     m_drawSphere = false;
     m_polymode = 2;
 }
@@ -32,7 +32,6 @@ void MyPanelOpenGL::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    updatePolyMode(m_polymode);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     createShaders();
@@ -61,6 +60,10 @@ void MyPanelOpenGL::paintGL(){
     m_shaderProgram->setUniformValue("theta",m_angles);
     m_shaderProgram->setUniformValue("Tex0",0);
     m_shaderProgram->setUniformValue("model",m_model);
+
+    updatePolyMode(m_polymode);
+    if(m_cull){ glEnable(GL_CULL_FACE); }
+    else{glDisable(GL_CULL_FACE); }
 
     if(m_drawSphere){
       m_matStack.push();
@@ -110,12 +113,10 @@ void MyPanelOpenGL::keyPressEvent(QKeyEvent *event)
         else{updateAngles(2,-step);}
         break;
     case Qt::Key_C:
-        if(glIsEnabled(GL_CULL_FACE)){glDisable(GL_CULL_FACE);}
-        else{glEnable(GL_CULL_FACE);}
+        m_cull = !m_cull;
         break;
     case Qt::Key_P:
         m_polymode = (m_polymode+1)%3;
-        updatePolyMode(m_polymode);
         break;
     case Qt::Key_S:
         m_drawSphere = !m_drawSphere;

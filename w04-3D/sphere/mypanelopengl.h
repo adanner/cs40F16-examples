@@ -32,6 +32,7 @@ private:
     cs40::Square* m_square;
 
     int m_polymode;
+    bool m_cull;
     bool m_drawSphere;
  
     cs40::MatrixStack m_matStack;
