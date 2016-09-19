@@ -1,4 +1,4 @@
-#version 130
+#version 410
 
 uniform vec4 vColor;
 uniform vec3 theta;

@@ -8,20 +8,24 @@ using cs40::Sphere;
 using cs40::Square;
 
 MyPanelOpenGL::MyPanelOpenGL(QWidget *parent) :
-    QGLWidget(parent), m_angles(-125.,0.,0.) {
+    QOpenGLWidget(parent), m_angles(-125.,0.,0.) {
 
     m_shaderProgram=NULL;
     m_vertexShader=NULL;
     m_fragmentShader=NULL;
+    m_texture = NULL;
 
     m_sphere = NULL;
-    m_drawSphere = true;
+    m_drawSphere = false;
     m_polymode = 2;
 }
 
 MyPanelOpenGL::~MyPanelOpenGL(){
     m_shaderProgram->release();
     destroyShaders();
+		if(m_texture){
+			delete m_texture; m_texture=NULL;
+		}
 }
 
 void MyPanelOpenGL::initializeGL()
@@ -35,8 +39,7 @@ void MyPanelOpenGL::initializeGL()
 
     m_sphere = new Sphere(0.5,30,30);
     m_square = new Square(1.);
-    m_textureID = bindTexture(QPixmap("data/earth.png"), GL_TEXTURE_2D);;
-    glBindTexture(GL_TEXTURE_2D, m_textureID);
+		m_texture = new QOpenGLTexture(QImage("data/earth.png").mirrored());
 
     m_shaderProgram->bind();
 
@@ -54,6 +57,7 @@ void MyPanelOpenGL::paintGL(){
 
     if(!m_shaderProgram){return;}
 
+		m_texture->bind();
     m_shaderProgram->setUniformValue("theta",m_angles);
     m_shaderProgram->setUniformValue("Tex0",0);
     m_shaderProgram->setUniformValue("model",m_model);
@@ -85,7 +89,6 @@ void MyPanelOpenGL::paintGL(){
     }
     glFlush();
 
-    //swapBuffers(); /* not need in QT see QGLWidget::setAutoBufferSwap */
 }
 
 
@@ -120,7 +123,7 @@ void MyPanelOpenGL::keyPressEvent(QKeyEvent *event)
     default:
         QWidget::keyPressEvent(event); /* pass to base class */
     }
-    updateGL();
+    update();
 }
 
 void MyPanelOpenGL::updateAngles(int idx, qreal amt){

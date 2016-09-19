@@ -1,8 +1,7 @@
-#ifndef MYPANELOPENGL_H
-#define MYPANELOPENGL_H
+#pragma once 
 
-#include <QtOpenGL/QGLWidget>
-#include <QtOpenGL/QtOpenGL>
+#include <QtWidgets>
+#include <QtOpenGL>
 #include <QMatrix4x4>
 #include "sphere.h"
 #include "square.h"
@@ -12,7 +11,7 @@ typedef QVector4D point4;
 typedef QVector4D color4;
 typedef QVector3D vec3;
 
-class MyPanelOpenGL : public QGLWidget
+class MyPanelOpenGL : public QOpenGLWidget
 {
     Q_OBJECT
 
@@ -39,7 +38,7 @@ private:
 
     QMatrix4x4 m_model;
 
-    GLuint m_textureID;
+		QOpenGLTexture* m_texture;
 
     vec3 m_angles; /* Euler angles for rotation */
 
@@ -71,5 +70,3 @@ signals:
 public slots:
 
 };
-
-#endif // MYPANELOPENGL_H
