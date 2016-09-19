@@ -36,6 +36,7 @@ private:
 
 protected:
     vec4 m_color;
+		QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer *m_vbo;
     float m_radius;
     int m_slices;
