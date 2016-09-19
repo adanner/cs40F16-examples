@@ -13,19 +13,19 @@ typedef QVector3D vec3;
 
 class MyPanelOpenGL : public QOpenGLWidget
 {
-    Q_OBJECT
+  Q_OBJECT
 
-protected:
+  protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
     void keyPressEvent(QKeyEvent* event);
 
-public:
+  public:
     explicit MyPanelOpenGL(QWidget *parent = 0);
     virtual ~MyPanelOpenGL();
 
-private:
+  private:
 
     /* simple test shapes */
     cs40::Sphere* m_sphere;
@@ -34,12 +34,12 @@ private:
     int m_polymode;
     bool m_cull;
     bool m_drawSphere;
- 
+
     cs40::MatrixStack m_matStack;
 
     QMatrix4x4 m_model;
 
-		QOpenGLTexture* m_texture;
+    QOpenGLTexture* m_texture;
 
     vec3 m_angles; /* Euler angles for rotation */
 
@@ -67,7 +67,7 @@ private:
     void destroyShaders();
 
 signals:
-    
-public slots:
+
+    public slots:
 
 };

@@ -5,42 +5,42 @@
 
 namespace cs40{
 
-typedef QVector3D vec3;
+  typedef QVector3D vec3;
 
-class MatrixStack
-{
-public:
-    /* construct a stack containing identity matrix */
-    MatrixStack();
+  class MatrixStack
+  {
+    public:
+      /* construct a stack containing identity matrix */
+      MatrixStack();
 
-    QMatrix4x4& top();
+      QMatrix4x4& top();
 
-    /* push copy of top onto stack */
-    void push();
+      /* push copy of top onto stack */
+      void push();
 
-    /* pop top element off stack */
-    void pop();
+      /* pop top element off stack */
+      void pop();
 
-    /* translate matrix at top of stack in place
-     * all matrix tranforms multiply on the right
-     * of top */
-    void translate(float dx, float dy, float dz);
+      /* translate matrix at top of stack in place
+       * all matrix tranforms multiply on the right
+       * of top */
+      void translate(float dx, float dy, float dz);
 
-    /* rotate matrix at top of stack CCW by angle (in degrees) around vec */
-    void rotate(float angle, vec3 vec);
+      /* rotate matrix at top of stack CCW by angle (in degrees) around vec */
+      void rotate(float angle, vec3 vec);
 
-    inline void rotateX(float angle){ rotate(angle, vec3(1.,0.,0.)); }
-    inline void rotateY(float angle){ rotate(angle, vec3(0.,1.,0.)); }
-    inline void rotateZ(float angle){ rotate(angle, vec3(0.,0.,1.)); }
+      inline void rotateX(float angle){ rotate(angle, vec3(1.,0.,0.)); }
+      inline void rotateY(float angle){ rotate(angle, vec3(0.,1.,0.)); }
+      inline void rotateZ(float angle){ rotate(angle, vec3(0.,0.,1.)); }
 
-    /* scales matrix at top of stack in place */
-    void scale(float fac);
+      /* scales matrix at top of stack in place */
+      void scale(float fac);
 
 
 
-private:
-    QList<QMatrix4x4> m_stack;
-};
+    private:
+      QList<QMatrix4x4> m_stack;
+  };
 
 } // namespace
 
