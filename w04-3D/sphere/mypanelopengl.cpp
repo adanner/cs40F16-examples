@@ -152,7 +152,6 @@ void MyPanelOpenGL::updatePolyMode(int val){
     if(mode != GL_NONE){
         glPolygonMode(GL_FRONT_AND_BACK, mode);
     }
-    //glPolygonMode(GL_BACK,GL_POINT);
 }
 
 void MyPanelOpenGL::createShaders(){
