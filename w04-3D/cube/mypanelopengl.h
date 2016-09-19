@@ -9,19 +9,19 @@ typedef QVector3D vec3;
 
 class MyPanelOpenGL : public QOpenGLWidget
 {
-    Q_OBJECT
+  Q_OBJECT
 
-protected:
+  protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
     void keyPressEvent(QKeyEvent* event);
 
-public:
+  public:
     explicit MyPanelOpenGL(QWidget *parent = 0);
     virtual ~MyPanelOpenGL();
 
-private:
+  private:
 
     unsigned int m_numVertices;
     point4* m_points; /* for vbo */
@@ -61,7 +61,7 @@ private:
     void setupVAO();
 
 signals:
-    
-public slots:
+
+    public slots:
 
 };
