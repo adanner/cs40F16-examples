@@ -23,6 +23,8 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(CMAKE_CXX_FLAGS 
     "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
+include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS})
+
 #default OpenGL libs
 SET(EXT_LIBS ${OPENGL_LIBRARY} ${GLEW_LIBRARY})
 
@@ -38,4 +40,5 @@ INCLUDE_DIRECTORIES(
 #things to actually build
 add_subdirectory(w01-intro)
 add_subdirectory(w02-opengl)
+add_subdirectory(w04-3D)
 
