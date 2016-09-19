@@ -12,6 +12,7 @@ MyPanelOpenGL::MyPanelOpenGL(QWidget *parent) :
     m_vertexShader=NULL;
     m_fragmentShader=NULL;
     m_vboData = NULL;
+    m_vao = NULL;
 
     m_numVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
     m_points = new point4[m_numVertices];
@@ -34,16 +35,9 @@ void MyPanelOpenGL::initializeGL()
     makeCube();
     createShaders();
     createVBO();
+    setupVAO();
 
-    m_shaderProgram->bind();
-    m_vboData->bind();
 
-    m_shaderProgram->enableAttributeArray("vPosition");
-    m_shaderProgram->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4, 0);
-
-    m_shaderProgram->enableAttributeArray("vColor");
-    m_shaderProgram->setAttributeBuffer("vColor", GL_FLOAT,
-                                      m_numVertices*sizeof(point4),4,0);
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -62,13 +56,16 @@ void MyPanelOpenGL::paintGL(){
         return;
     }
 
+		m_vao->bind();
+		m_shaderProgram->bind();
     m_shaderProgram->setUniformValue("theta", m_angles);
     glDrawArrays(GL_TRIANGLES, 0, m_numVertices);
 
     glFlush();
 
+	  m_shaderProgram->release();
+		m_vao->release();
 
-    //swapBuffers(); /* not need in QT see QGLWidget::setAutoBufferSwap */
 }
 
 
@@ -165,6 +162,9 @@ qreal MyPanelOpenGL::wrap(qreal amt){
 
 void MyPanelOpenGL::createVBO(){
     destroyVBO(); //get rid of any old buffers
+   
+		m_vao = new QOpenGLVertexArrayObject(this);
+    m_vao->create();
 
     m_vboData = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     m_vboData->create();
@@ -180,7 +180,12 @@ void MyPanelOpenGL::createVBO(){
 }
 
 void MyPanelOpenGL::destroyVBO(){
-    if (m_vboData){
+     if (m_vao){
+        m_vao->release();
+        delete m_vao; m_vao = NULL;
+    }
+	
+	  if (m_vboData){
         m_vboData->release();
         delete m_vboData; m_vboData=NULL;
     }
@@ -218,5 +223,31 @@ void MyPanelOpenGL::destroyShaders(){
         m_shaderProgram->release();
         delete m_shaderProgram; m_shaderProgram=NULL;
     }
+}
+
+void MyPanelOpenGL::setupVAO(){
+    /* The VAO remembers the connections between VBOs, shader
+     * variables, and buffer layout */
+    if(!m_vboData or !m_shaderProgram->isLinked()){
+        return;
+    }
+
+    m_vao->bind();
+
+    m_shaderProgram->bind();
+    m_vboData->bind();
+
+    m_shaderProgram->enableAttributeArray("vPosition");
+    m_shaderProgram->setAttributeBuffer("vPosition", GL_FLOAT, 0, 4, 0);
+
+    m_shaderProgram->enableAttributeArray("vColor");
+    m_shaderProgram->setAttributeBuffer("vColor", GL_FLOAT,
+                                      m_numVertices*sizeof(point4),4,0);
+
+
+    m_shaderProgram->release();
+    m_vao->release();
+
+
 }
 

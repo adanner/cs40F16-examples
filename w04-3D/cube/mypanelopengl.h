@@ -32,6 +32,7 @@ private:
     color4 *m_vertex_colors; /* unique cube colors */
 
     /* GPU data for shaders */
+    QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer *m_vboData;
 
     /* Shaders and program */
@@ -57,6 +58,7 @@ private:
     void destroyVBO();
     void createShaders();
     void destroyShaders();
+    void setupVAO();
 
 signals:
     

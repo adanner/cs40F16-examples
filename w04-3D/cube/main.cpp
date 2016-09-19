@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 	/*OpenGL format must be set before launching application*/
 	QSurfaceFormat format;
 	format.setVersion(4,1);
-	//format.setProfile(QSurfaceFormat::CoreProfile);
+	format.setProfile(QSurfaceFormat::CoreProfile);
 	QSurfaceFormat::setDefaultFormat(format);
 
 
