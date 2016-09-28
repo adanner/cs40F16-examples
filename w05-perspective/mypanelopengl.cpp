@@ -33,7 +33,7 @@ void MyPanelOpenGL::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-    glFrontFace(GL_CCW);
+    glFrontFace(GL_CW);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     createShaders();
