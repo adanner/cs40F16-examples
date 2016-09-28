@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
 
 #for FindGLM.cmake, FindGLFW3.cmake, other helpers
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules) 
@@ -41,4 +41,5 @@ INCLUDE_DIRECTORIES(
 add_subdirectory(w01-intro)
 add_subdirectory(w02-opengl)
 add_subdirectory(w04-3D)
+add_subdirectory(w05-perspective)
 
