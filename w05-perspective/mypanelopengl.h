@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <QtWidgets>
 #include <QtOpenGL>
@@ -34,10 +34,13 @@ private:
     int m_polymode;
     bool m_cull;
     bool m_drawSphere;
- 
+    bool m_useOrtho;
+
     cs40::MatrixStack m_matStack;
 
     QMatrix4x4 m_model;
+    QMatrix4x4 m_view;
+    QMatrix4x4 m_projection;
 
 		QOpenGLTexture* m_texture;
 
@@ -47,6 +50,9 @@ private:
     QOpenGLShader *m_vertexShader;
     QOpenGLShader *m_fragmentShader;
     QOpenGLShaderProgram *m_shaderProgram;
+
+    //Apply default rotate/scale to sphere
+    void drawSphere();
 
     /* update Euler angle at index idx by amt
      * idx=0,1,2 -> x,y,z */
@@ -67,7 +73,7 @@ private:
     void destroyShaders();
 
 signals:
-    
+
 public slots:
 
 };

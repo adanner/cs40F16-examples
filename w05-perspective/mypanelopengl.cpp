@@ -17,6 +17,7 @@ MyPanelOpenGL::MyPanelOpenGL(QWidget *parent) :
     m_sphere = NULL;
     m_cull = false;
     m_drawSphere = true;
+    m_useOrtho = true;
     m_polymode = 2;
 }
 
@@ -32,17 +33,17 @@ void MyPanelOpenGL::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
+    glFrontFace(GL_CCW);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     createShaders();
 
-    m_sphere = new Sphere(0.5,30,30);
+    m_sphere = new Sphere(1,30,30);
     m_square = new Square(1.);
 		m_texture = new QOpenGLTexture(QImage("data/earth.png").mirrored());
 
     m_shaderProgram->bind();
-
-
+    m_view.lookAt(vec3(0,0,5),vec3(0,0,-10),vec3(0,1,0));
 }
 
 void MyPanelOpenGL::resizeGL(int w, int h)
@@ -57,9 +58,18 @@ void MyPanelOpenGL::paintGL(){
     if(!m_shaderProgram){return;}
 
 		m_texture->bind();
-    m_shaderProgram->setUniformValue("theta",m_angles);
     m_shaderProgram->setUniformValue("Tex0",0);
-    m_shaderProgram->setUniformValue("model",m_model);
+    m_shaderProgram->setUniformValue("view",m_view);
+
+
+    m_projection.setToIdentity();
+    if(m_useOrtho){
+      m_projection.ortho(-8,8,-8,8,1,15);
+    }
+    else{
+      m_projection.perspective(65,1,1,15);
+    }
+    m_shaderProgram->setUniformValue("project",m_projection);
 
     updatePolyMode(m_polymode);
     if(m_cull){ glEnable(GL_CULL_FACE); }
@@ -67,33 +77,34 @@ void MyPanelOpenGL::paintGL(){
 
     if(m_drawSphere){
       m_matStack.push();
-      m_matStack.translate(-0.5,0,0);
-      for (int i=0; i<2; i++){
-        m_matStack.push();
-        m_matStack.translate(0,-0.5,0);
-        m_shaderProgram->setUniformValue("model",m_matStack.top());
-        m_sphere->draw(m_shaderProgram);
-        m_matStack.translate(0,0.75,0);
-        m_matStack.scale(0.5);
-        m_shaderProgram->setUniformValue("model",m_matStack.top());
-        m_sphere->draw(m_shaderProgram);
-        m_matStack.translate(0,0.75,0);
-        m_matStack.scale(0.5);
-        m_shaderProgram->setUniformValue("model",m_matStack.top());
-        m_sphere->draw(m_shaderProgram);
-        m_matStack.pop();
-        m_matStack.translate(1,0.,0);
-      }
+      m_matStack.translate(0,0,-6);
+      m_matStack.push();
+      m_matStack.translate(-3.0,0,2);
+      drawSphere();
       m_matStack.pop();
-      //m_square->draw(m_shaderProgram);
+      m_matStack.translate(+3.0,0,-2);
+      drawSphere();
+      m_matStack.pop();
     }
     else{
+      m_matStack.push();
+      m_matStack.translate(0,0,5);
+      m_shaderProgram->setUniformValue("model",m_matStack.top());
       m_square->draw(m_shaderProgram);
+      m_matStack.pop();
     }
     glFlush();
 
 }
 
+void MyPanelOpenGL::drawSphere(){
+  m_matStack.push();
+  m_matStack.scale(2);
+  m_matStack.rotateX(-90);
+  m_shaderProgram->setUniformValue("model",m_matStack.top());
+  m_sphere->draw(m_shaderProgram);
+  m_matStack.pop();
+}
 
 void MyPanelOpenGL::keyPressEvent(QKeyEvent *event)
 {
@@ -120,6 +131,9 @@ void MyPanelOpenGL::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_S:
         m_drawSphere = !m_drawSphere;
+        break;
+    case Qt::Key_O:
+        m_useOrtho = !m_useOrtho;
         break;
     default:
         QWidget::keyPressEvent(event); /* pass to base class */
@@ -188,4 +202,3 @@ void MyPanelOpenGL::destroyShaders(){
         delete m_shaderProgram; m_shaderProgram=NULL;
     }
 }
-
