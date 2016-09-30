@@ -42,4 +42,6 @@ add_subdirectory(w01-intro)
 add_subdirectory(w02-opengl)
 add_subdirectory(w04-3D)
 add_subdirectory(w05-perspective)
+add_subdirectory(common)
+add_subdirectory(w06-lighting)
 

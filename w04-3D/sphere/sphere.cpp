@@ -154,6 +154,6 @@ void Sphere::draw(QOpenGLShaderProgram* prog){
 	glDrawArrays(GL_TRIANGLE_FAN, offset, fansize);
 	glDrawArrays(GL_TRIANGLE_FAN, offset+fansize, fansize);
 	//prog->release();
-	m_vbo->release();
-	m_vao->release();
+	//m_vbo->release();
+	//m_vao->release();
 }

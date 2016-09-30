@@ -61,6 +61,6 @@ void Square::draw(QOpenGLShaderProgram* prog){
 	prog->enableAttributeArray("vTexture");
 	prog->setAttributeBuffer("vTexture",GL_FLOAT,4*sizeof(vec3),2,0);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	m_vbo->release();
-	m_vao->release();
+	//m_vbo->release();
+	//m_vao->release();
 }
