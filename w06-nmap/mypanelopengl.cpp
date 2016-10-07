@@ -156,7 +156,7 @@ void MyPanelOpenGL::keyPressEvent(QKeyEvent *event) {
     m_drawSphere = !m_drawSphere;
     break;
   case Qt::Key_V:
-    m_curr_prog = (m_curr_prog + 1) % CS40_NUM_PROGS;
+    m_curr_prog = (m_curr_prog + 1) % (CS40_NUM_PROGS-1);
     break;
   default:
     QWidget::keyPressEvent(event); /* pass to base class */
