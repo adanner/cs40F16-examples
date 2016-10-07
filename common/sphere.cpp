@@ -13,6 +13,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
   int nverts = m_stripsize * (m_stacks - 2) + 2 * (slices + 2);
   vec3 *vertices = new vec3[nverts];
   vec3 *normals = new vec3[nverts];
+  vec3 *tangents = new vec3[nverts];
   vec2 *texCoords = new vec2[nverts];
   double latstep = M_PI / m_stacks;
   double longstep = 2. * M_PI / m_slices;
@@ -46,9 +47,11 @@ Sphere::Sphere(float radius, int slices, int stacks)
       sinlong = sin(lng);
       vertices[idx] = vec3(zcos1 * coslong, zcos1 * sinlong, z1);
       normals[idx] = vec3(cos(lat1) * coslong, cos(lat1) * sinlong, sin(lat1));
+      tangents[idx] = vec3(-sinlong, coslong, 0.);
       texCoords[idx++] = vec2(texX, texY + texYstep);
       vertices[idx] = vec3(zcos0 * coslong, zcos0 * sinlong, z0);
       normals[idx] = vec3(cos(lat0) * coslong, cos(lat0) * sinlong, sin(lat0));
+      tangents[idx] = vec3(-sinlong, coslong, 0.);
       texCoords[idx++] = vec2(texX, texY);
       lng += longstep;
       texX += texXstep;
@@ -65,6 +68,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
   /* north pole */
   vertices[idx] = vec3(0, 0, m_radius);
   normals[idx] = vec3(0, 0., 1.);
+  tangents[idx] = vec3(1., 0., 0.);
   texCoords[idx++] = vec2(0.5, 1);
   lat0 = M_PI / 2 - latstep;
   lng = -M_PI;
@@ -77,6 +81,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
     sinlong = sin(lng);
     vertices[idx] = vec3(zcos0 * coslong, zcos0 * sinlong, z0);
     normals[idx] = vec3(cos(lat0) * coslong, cos(lat0) * sinlong, sin(lat0));
+    tangents[idx] = vec3(-sinlong, coslong, 0.);
     texCoords[idx++] = vec2(texX, texY);
     lng += longstep;
     texX += texXstep;
@@ -85,6 +90,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
   /* south pole */
   vertices[idx] = vec3(0, 0, -m_radius);
   normals[idx] = vec3(0, 0., -1.);
+  tangents[idx] = vec3(-1, 0., 0.);
   texCoords[idx++] = vec2(0.5, 0);
   lat0 = -M_PI / 2 + latstep;
   lng = M_PI; /* Q: why M_PI and not -M_PI */
@@ -97,6 +103,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
     sinlong = sin(lng);
     vertices[idx] = vec3(zcos0 * coslong, zcos0 * sinlong, z0);
     normals[idx] = vec3(cos(lat0) * coslong, cos(lat0) * sinlong, sin(lat0));
+    tangents[idx] = vec3(-sinlong, coslong, 0);
     texCoords[idx++] = vec2(texX, texY);
     lng -= longstep; /* Q: why -= ?*/
     texX -= texXstep;
@@ -110,14 +117,15 @@ Sphere::Sphere(float radius, int slices, int stacks)
     int TexSize =
         m_stripsize * (m_stacks - 2) * sizeof(vec2); /* all mid lat strips */
     TexSize += 2 * (m_slices + 2) * sizeof(vec2);    /* two polar fans*/
-    /* size of Normals */
+    /* size of Normals, Tangents */
     int NormalSize = DataSize;
     // cout << "DataSize: " << DataSize + TexSize << endl;
     m_vbo->bind();
-    m_vbo->allocate(DataSize + TexSize + NormalSize);
+    m_vbo->allocate(DataSize + TexSize + 2*NormalSize);
     m_vbo->write(0, vertices, DataSize);
     m_vbo->write(DataSize, texCoords, TexSize);
     m_vbo->write(DataSize + TexSize, normals, NormalSize);
+    m_vbo->write(DataSize + TexSize + NormalSize, tangents, NormalSize);
     m_vbo->release();
   }
 
@@ -127,6 +135,8 @@ Sphere::Sphere(float radius, int slices, int stacks)
   texCoords = NULL;
   delete[] normals;
   normals = NULL;
+  delete[] tangents;
+  tangents = NULL;
 }
 
 bool Sphere::initVBO() {
@@ -173,6 +183,9 @@ void Sphere::draw(QOpenGLShaderProgram *prog) {
   prog->enableAttributeArray("vNormal");
   prog->setAttributeBuffer("vNormal", GL_FLOAT,
                            nverts * (sizeof(vec3) + sizeof(vec2)), 3, 0);
+  prog->enableAttributeArray("vTangent");
+  prog->setAttributeBuffer("vTangent", GL_FLOAT,
+                           nverts * (2*sizeof(vec3) + sizeof(vec2)), 3, 0);
   for (int i = 0; i < m_stacks - 2; i++) {
     glDrawArrays(GL_TRIANGLE_STRIP, i * m_stripsize, m_stripsize);
   }
