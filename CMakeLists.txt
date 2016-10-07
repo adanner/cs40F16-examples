@@ -44,4 +44,5 @@ add_subdirectory(w04-3D)
 add_subdirectory(w05-perspective)
 add_subdirectory(common)
 add_subdirectory(w06-lighting)
+add_subdirectory(w06-nmap)
 
