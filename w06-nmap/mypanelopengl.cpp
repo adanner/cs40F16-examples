@@ -46,6 +46,7 @@ void MyPanelOpenGL::initializeGL() {
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   createShaders(0, "vshader.glsl", "fshader.glsl");
   createShaders(1, "vshader2.glsl", "fshader2.glsl");
+  createShaders(2, "vshader3.glsl", "fshader3.glsl");
 
   m_sphere = new Sphere(0.5, 30, 30);
   m_square = new Square(1.);

@@ -11,7 +11,7 @@ typedef QVector4D color4;
 typedef QVector3D vec3;
 typedef QMatrix4x4 mat4;
 
-#define CS40_NUM_PROGS 2
+#define CS40_NUM_PROGS 3
 
 class MyPanelOpenGL : public QOpenGLWidget {
   Q_OBJECT
