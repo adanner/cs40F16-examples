@@ -35,4 +35,5 @@ void main() {
   }
 
   fragColor = vec4((ambient + diffuse + specular).xyz, 1);
+  if (baseColor.b > 0.3 && baseColor.r<0.4 && baseColor.g<0.4) {discard; }
 }

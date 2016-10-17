@@ -32,6 +32,7 @@ TARGET_LINK_LIBRARIES(particles ${EXT_LIBS} libcommon
   Qt5::Core Qt5::Gui Qt5::OpenGL)
 
 symlink_data(particle_shaders *.glsl)
+symlink_data(particle_data data)
 
 
 
