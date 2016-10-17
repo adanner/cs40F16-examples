@@ -234,8 +234,8 @@ void MyPanelOpenGL::drawFountain() {
   m_shaderPrograms[m_curr_prog]->setUniformValue("vSColor",
                                                  vec4(1., 1., 1., 1.));
   m_shaderPrograms[m_curr_prog]->setUniformValue("Tex0", 0);
-  m_shaderPrograms[m_curr_prog]->enableAttributeArray("vPosition");
-  m_shaderPrograms[m_curr_prog]->setAttributeBuffer("vPosition", GL_FLOAT, 0, 3,
+  m_shaderPrograms[m_curr_prog]->enableAttributeArray("pVelocity");
+  m_shaderPrograms[m_curr_prog]->setAttributeBuffer("pVelocity", GL_FLOAT, 0, 3,
                                                     0);
   m_shaderPrograms[m_curr_prog]->enableAttributeArray("startTime");
   m_shaderPrograms[m_curr_prog]->setAttributeBuffer(
