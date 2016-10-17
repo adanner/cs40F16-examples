@@ -228,6 +228,7 @@ void MyPanelOpenGL::makeFountain() {
 void MyPanelOpenGL::drawFountain() {
   m_fount_vao->bind();
   m_fountain->bind();
+  m_texture->bind();
   m_shaderPrograms[m_curr_prog]->setUniformValue("vColor",
                                                  vec4(0.8, 0.8, 1., 1.));
   m_shaderPrograms[m_curr_prog]->setUniformValue("vSColor",
