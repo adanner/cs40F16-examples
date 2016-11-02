@@ -14,11 +14,10 @@ uniform mat4 modelView;
 out vec4 color;
 out vec2 texCoord;
 
-void main() 
-{
+void main() {
 
-    color = vColor;
-    texCoord = vTexture;
+  color = vColor;
+  texCoord = vTexture;
 
-    gl_Position = projection*modelView*vPosition;
-} 
+  gl_Position = projection * modelView * vPosition;
+}

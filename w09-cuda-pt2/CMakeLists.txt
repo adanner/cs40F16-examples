@@ -1,9 +1,4 @@
-find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-find_package(Threads REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5OpenGL REQUIRED)
 
 # Note set CUDA_BUILD_EMULATION to OFF to enable Device mode compilation.
 #set(CUDA_SDK /usr/local/src/NVIDIA_CUDA_SDK)
@@ -30,7 +25,7 @@ cuda_add_library(mycuda
   timer.cu book.cu cudahelpers.cu)
 
 
-set(GPROG dot)
+set(GPROG dot ripple shared_bitmap ray ray_noconst heat)
 
 foreach(PROG ${GPROG})
   cuda_add_executable(${PROG} ${PROG}.cu ${HDRS})
