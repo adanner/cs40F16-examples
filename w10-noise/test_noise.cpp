@@ -2,10 +2,13 @@
 #include <cstdlib>
 #include <string>
 
+#include <QVector3D>
 #include <QColor>
 #include <QImage>
 #include <glm/glm.hpp>
 #include <glm/gtc/noise.hpp>
+
+typedef QVector3D vec3;
 using namespace std;
 
 typedef enum {
