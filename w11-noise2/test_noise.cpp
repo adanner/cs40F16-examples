@@ -2,9 +2,9 @@
 #include <cstdlib>
 #include <string>
 
-#include <QVector3D>
 #include <QColor>
 #include <QImage>
+#include <QVector3D>
 #include <glm/glm.hpp>
 #include <glm/gtc/noise.hpp>
 
