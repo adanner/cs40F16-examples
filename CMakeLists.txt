@@ -49,4 +49,5 @@ add_subdirectory(w07-particles)
 add_subdirectory(w08-cuda-pt1)
 add_subdirectory(w09-cuda-pt2)
 add_subdirectory(w10-noise)
+add_subdirectory(w11-noise2)
 
