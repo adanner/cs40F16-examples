@@ -51,4 +51,5 @@ add_subdirectory(w09-cuda-pt2)
 add_subdirectory(w10-noise)
 add_subdirectory(w11-noise2)
 add_subdirectory(w12-voronoi)
+add_subdirectory(w13-gshader)
 
