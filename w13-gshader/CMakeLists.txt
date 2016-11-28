@@ -22,8 +22,6 @@ set(SRC
 )
 
 set(SHADERS
-  vshader.glsl
-  fshader.glsl
   vfraglight.glsl
   ffraglight.glsl
   vnormals.glsl

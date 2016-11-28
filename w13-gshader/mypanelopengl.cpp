@@ -23,11 +23,9 @@ MyPanelOpenGL::MyPanelOpenGL(QWidget *parent)
   m_drawSphere = true;
   m_polymode = 2;
   m_cull = true;
-  m_curr_prog = 0;
 }
 
 MyPanelOpenGL::~MyPanelOpenGL() {
-  m_shaderPrograms[m_curr_prog]->release();
   delete m_sphere;
   m_sphere = NULL;
   delete m_square;
@@ -42,9 +40,8 @@ void MyPanelOpenGL::initializeGL() {
   updatePolyMode(m_polymode);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  createShaders(0, "vshader.glsl", "fshader.glsl", "" );
-  createShaders(1, "vfraglight.glsl", "ffraglight.glsl", "");
-  createShaders(2, "vnormals.glsl", "fnormals.glsl", "gnormals.glsl");
+  createShaders(0, "vfraglight.glsl", "ffraglight.glsl", "");
+  createShaders(1, "vnormals.glsl", "fnormals.glsl", "gnormals.glsl");
 
   m_sphere = new Sphere(0.5, 10, 10);
   m_square = new Square(1.);
@@ -57,15 +54,18 @@ void MyPanelOpenGL::initializeGL() {
 void MyPanelOpenGL::resizeGL(int w, int h) { glViewport(0, 0, w, h); }
 
 void MyPanelOpenGL::paintGL() {
-   drawShapes(m_curr_prog);
-	 if(m_curr_prog==2){
-		 drawNormals();
+ 
+	setModes(); /* clear, set poly mode, culling */
+
+   drawScene(SHAPE_PROG);
+	 if(m_drawNormals){
+		 drawScene(NORMAL_PROG);
 	}
+  glFlush();
 }
 
-void MyPanelOpenGL::drawShapes(int prog){
-  /* clear both color and depth buffer */
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void MyPanelOpenGL::setModes(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   updatePolyMode(m_polymode);
   if (m_cull) {
@@ -73,60 +73,62 @@ void MyPanelOpenGL::drawShapes(int prog){
   } else {
     glDisable(GL_CULL_FACE);
   }
- 
-	if(prog==2){
-		prog = 1; /* don't use geom shader to draw shapes */
+}
+
+void MyPanelOpenGL::setUniforms(int prog){
+  m_shaderPrograms[prog]->bind();
+  m_shaderPrograms[prog]->setUniformValue("projection", m_projection);
+  m_shaderPrograms[prog]->setUniformValue("camera", m_camera);
+  m_shaderPrograms[prog]->setUniformValue(
+      "lightPos", vec4(1.0, 0, 2, 1.)); // in world coordinates
+  updateModel(prog);
+}
+
+void MyPanelOpenGL::updateModel(int prog){
+	m_shaderPrograms[prog]->setUniformValue("model", m_model);
+  mat4 mview = m_camera * m_model;
+  m_shaderPrograms[prog]->setUniformValue("modelView", mview);
+  m_shaderPrograms[prog]->setUniformValue("normalMatrix",
+                                                 mview.normalMatrix());
+}
+
+void MyPanelOpenGL::drawScene(int prog){
+
+   if (!m_shaderPrograms[prog]) { return; }
+   setUniforms(prog);
+
+	/* draw geometry as points? */
+	bool withPoints = (prog==NORMAL_PROG);
+
+	m_stack.push();
+	/*global transforms */
+	
+	if (m_drawSphere) {
+		m_stack.push();
+		/*sphere transforms */
+	  m_model=m_stack.top();
+    updateModel(prog);
+    m_sphere->draw(m_shaderPrograms[prog], withPoints);
+		m_stack.pop();
 	}
-  if (!m_shaderPrograms[prog]) {
-    return;
-  }
-  m_shaderPrograms[prog]->bind();
-  mat4 mview = m_camera * m_model;
-  m_shaderPrograms[prog]->setUniformValue("projection", m_projection);
-  m_shaderPrograms[prog]->setUniformValue("camera", m_camera);
-  m_shaderPrograms[prog]->setUniformValue("model", m_model);
-  m_shaderPrograms[prog]->setUniformValue("modelView", mview);
-  m_shaderPrograms[prog]->setUniformValue("normalMatrix",
-                                                 mview.normalMatrix());
-  m_shaderPrograms[prog]->setUniformValue(
-      "lightPos", vec4(1.0, 0, 2, 1.)); // in world coordinates
+	
+	m_stack.push();
+	/*square transforms */
+	m_stack.rotate(m_angles.y(), vec3(0,1,0));
+	m_model=m_stack.top();
+  updateModel(prog);
+	m_square->draw(m_shaderPrograms[prog], withPoints);
+	m_stack.pop();
 
-  if (m_drawSphere) {
-    m_sphere->draw(m_shaderPrograms[prog]);
-    drawSquare(m_angles.y(), prog);
-  } else {
-    drawSquare(m_angles.y(), prog);
-  }
-  glFlush();
+	m_stack.pop();
 
 }
 
-void MyPanelOpenGL::drawNormals(){
-	int prog = 2;
-  m_shaderPrograms[prog]->bind();
-  mat4 mview = m_camera * m_model;
-  m_shaderPrograms[prog]->setUniformValue("projection", m_projection);
-  m_shaderPrograms[prog]->setUniformValue("camera", m_camera);
-  m_shaderPrograms[prog]->setUniformValue("model", m_model);
-  m_shaderPrograms[prog]->setUniformValue("modelView", mview);
-  m_shaderPrograms[prog]->setUniformValue("normalMatrix",
-                                                 mview.normalMatrix());
-  m_shaderPrograms[prog]->setUniformValue(
-      "lightPos", vec4(1.0, 0, 2, 1.)); // in world coordinates
-
-  if (m_drawSphere) {
-    m_sphere->draw(m_shaderPrograms[prog], true);
-    drawSquare(m_angles.y(), prog, true);
-  } else {
-    drawSquare(m_angles.y(), prog, true);
-  }
-  glFlush();
-}
-
-void MyPanelOpenGL::drawSquare(float yangle, int  prog, bool withPoints) {
+void MyPanelOpenGL::drawSquare(float yangle, bool withPoints) {
   m_model.setToIdentity();
   m_model.rotate(yangle, vec3(0, 1, 0));
   mat4 mview = m_camera * m_model;
+	int prog = withPoints ? NORMAL_PROG : SHAPE_PROG;
   m_shaderPrograms[prog]->setUniformValue("model", m_model);
   m_shaderPrograms[prog]->setUniformValue("modelView", mview);
   m_shaderPrograms[prog]->setUniformValue("normalMatrix",
@@ -169,8 +171,8 @@ void MyPanelOpenGL::keyPressEvent(QKeyEvent *event) {
   case Qt::Key_S:
     m_drawSphere = !m_drawSphere;
     break;
-  case Qt::Key_L:
-    m_curr_prog = (m_curr_prog + 1) % NUMPROGS;
+  case Qt::Key_N:
+    m_drawNormals = !m_drawNormals;
     break;
   default:
     QWidget::keyPressEvent(event); /* pass to base class */
@@ -210,7 +212,6 @@ void MyPanelOpenGL::updatePolyMode(int val) {
   if (mode != GL_NONE) {
     glPolygonMode(GL_FRONT_AND_BACK, mode);
   }
-  // glPolygonMode(GL_BACK,GL_POINT);
 }
 
 void MyPanelOpenGL::createShaders(int i, 
