@@ -103,6 +103,8 @@ void MyPanelOpenGL::drawScene(int prog) {
 
   m_stack.push();
   /*global transforms */
+  m_stack.rotate(m_angles.z(), vec3(0, 0, 1));
+  m_stack.rotate(m_angles.x(), vec3(1, 0, 0));
 
   if (m_drawSphere) {
     m_stack.push();
