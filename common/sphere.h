@@ -3,7 +3,6 @@
 #include <QtOpenGL>
 #include <cmath>
 
-
 namespace cs40 {
 
 typedef QVector2D vec2;
@@ -19,7 +18,7 @@ public:
   ~Sphere();
 
   /* draw the sphere using provided shader program  */
-  void draw(QOpenGLShaderProgram *prog, bool points=false);
+  void draw(QOpenGLShaderProgram *prog, bool points = false);
 
   /* Set Ambient and Diffuse color of Sphere */
   inline void setColor(const vec3 &color) {
@@ -42,15 +41,15 @@ private:
    * Return true if generate was a success, false otherwise
    */
   bool initVBO();
-	/* setUp VAO once on firstDraw */
-	void setupVAO(QOpenGLShaderProgram *prog);
+  /* setUp VAO once on firstDraw */
+  void setupVAO(QOpenGLShaderProgram *prog);
 
 protected:
   vec4 m_color;
   vec4 m_spec_color;
   QOpenGLBuffer *m_vbo;
   QOpenGLVertexArrayObject *m_vao;
-	bool m_firstDraw;
+  bool m_firstDraw;
   float m_radius;
   int m_slices;
   int m_stacks;

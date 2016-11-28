@@ -9,7 +9,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
     : m_color(0, 0, 1, 1), m_spec_color(1, 1, 1, 1), m_vbo(NULL),
       m_radius(radius), m_slices(slices), m_stacks(stacks) {
 
-	m_firstDraw = true;
+  m_firstDraw = true;
   m_stripsize = (slices + 1) * 2;
   int nverts = m_stripsize * (m_stacks - 2) + 2 * (slices + 2);
   vec3 *vertices = new vec3[nverts];
@@ -122,7 +122,7 @@ Sphere::Sphere(float radius, int slices, int stacks)
     int NormalSize = DataSize;
     // cout << "DataSize: " << DataSize + TexSize << endl;
     m_vbo->bind();
-    m_vbo->allocate(DataSize + TexSize + 2*NormalSize);
+    m_vbo->allocate(DataSize + TexSize + 2 * NormalSize);
     m_vbo->write(0, vertices, DataSize);
     m_vbo->write(DataSize, texCoords, TexSize);
     m_vbo->write(DataSize + TexSize, normals, NormalSize);
@@ -168,7 +168,7 @@ Sphere::~Sphere() {
   }
 }
 
-void Sphere::setupVAO(QOpenGLShaderProgram *prog){
+void Sphere::setupVAO(QOpenGLShaderProgram *prog) {
   m_vao->bind();
   m_vbo->bind();
   prog->enableAttributeArray("vPosition");
@@ -181,33 +181,33 @@ void Sphere::setupVAO(QOpenGLShaderProgram *prog){
                            nverts * (sizeof(vec3) + sizeof(vec2)), 3, 0);
   prog->enableAttributeArray("vTangent");
   prog->setAttributeBuffer("vTangent", GL_FLOAT,
-                           nverts * (2*sizeof(vec3) + sizeof(vec2)), 3, 0);
-	m_vao->release();
-	m_vbo->release();
+                           nverts * (2 * sizeof(vec3) + sizeof(vec2)), 3, 0);
+  m_vao->release();
+  m_vbo->release();
 }
 
 void Sphere::draw(QOpenGLShaderProgram *prog, bool withPoints) {
   if (!prog) {
     return;
   }
-	if (m_firstDraw){
-		setupVAO(prog);
-		m_firstDraw = false;
-	}
+  if (m_firstDraw) {
+    setupVAO(prog);
+    m_firstDraw = false;
+  }
   m_vao->bind();
 
-	GLenum mode = withPoints ? GL_POINTS: GL_TRIANGLE_STRIP;  
-  vec4 clr = withPoints ? vec4(1,1,1,1): m_color;
-	prog->setUniformValue("vColor", clr);
+  GLenum mode = withPoints ? GL_POINTS : GL_TRIANGLE_STRIP;
+  vec4 clr = withPoints ? vec4(1, 1, 1, 1) : m_color;
+  prog->setUniformValue("vColor", clr);
   prog->setUniformValue("vSColor", m_spec_color);
   for (int i = 0; i < m_stacks - 2; i++) {
     glDrawArrays(mode, i * m_stripsize, m_stripsize);
   }
   int offset = (m_stacks - 2) * m_stripsize;
   int fansize = m_slices + 2;
-	if (! withPoints) {
-		mode = GL_TRIANGLE_FAN;
-	}
+  if (!withPoints) {
+    mode = GL_TRIANGLE_FAN;
+  }
   glDrawArrays(mode, offset, fansize);
   glDrawArrays(mode, offset + fansize, fansize);
   m_vao->release();

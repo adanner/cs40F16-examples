@@ -32,11 +32,12 @@ Square::Square(float width)
 
   if (initVBO()) {
     m_vbo->bind();
-    m_vbo->allocate(4 * (3*sizeof(vec3) + sizeof(vec2)));
+    m_vbo->allocate(4 * (3 * sizeof(vec3) + sizeof(vec2)));
     m_vbo->write(0, vertices, 4 * sizeof(vec3));
     m_vbo->write(4 * sizeof(vec3), texCoords, 4 * sizeof(vec2));
     m_vbo->write(4 * (sizeof(vec3) + sizeof(vec2)), normals, 4 * sizeof(vec3));
-    m_vbo->write(4 * (2*sizeof(vec3) + sizeof(vec2)), tangents, 4 * sizeof(vec3));
+    m_vbo->write(4 * (2 * sizeof(vec3) + sizeof(vec2)), tangents,
+                 4 * sizeof(vec3));
     m_vbo->release();
   }
 
@@ -77,37 +78,37 @@ Square::~Square() {
     m_vao = NULL;
   }
 }
-void Square::setupVAO(QOpenGLShaderProgram *prog){
-	m_vao->bind();
-	m_vbo->bind();
-	prog->enableAttributeArray("vPosition");
-	prog->setAttributeBuffer("vPosition", GL_FLOAT, 0, 3, 0);
-	prog->enableAttributeArray("vTexture");
-	prog->setAttributeBuffer("vTexture", GL_FLOAT, 4 * sizeof(vec3), 2, 0);
-	prog->enableAttributeArray("vNormal");
-	prog->setAttributeBuffer("vNormal", GL_FLOAT,
-			4 * (sizeof(vec3) + sizeof(vec2)), 3, 0);
-	prog->enableAttributeArray("vTangent");
-	prog->setAttributeBuffer("vTangent", GL_FLOAT,
-			4 * (2*sizeof(vec3) + sizeof(vec2)), 3, 0);
-	m_vao->release();
-	m_vbo->release();
+void Square::setupVAO(QOpenGLShaderProgram *prog) {
+  m_vao->bind();
+  m_vbo->bind();
+  prog->enableAttributeArray("vPosition");
+  prog->setAttributeBuffer("vPosition", GL_FLOAT, 0, 3, 0);
+  prog->enableAttributeArray("vTexture");
+  prog->setAttributeBuffer("vTexture", GL_FLOAT, 4 * sizeof(vec3), 2, 0);
+  prog->enableAttributeArray("vNormal");
+  prog->setAttributeBuffer("vNormal", GL_FLOAT,
+                           4 * (sizeof(vec3) + sizeof(vec2)), 3, 0);
+  prog->enableAttributeArray("vTangent");
+  prog->setAttributeBuffer("vTangent", GL_FLOAT,
+                           4 * (2 * sizeof(vec3) + sizeof(vec2)), 3, 0);
+  m_vao->release();
+  m_vbo->release();
 }
 
 void Square::draw(QOpenGLShaderProgram *prog, bool withPoints) {
-	if (!prog) {
-		return;
-	}
+  if (!prog) {
+    return;
+  }
 
-	if (m_firstDraw){
-		setupVAO(prog);
-		m_firstDraw = false;
-	}
-	m_vao->bind();
-	GLenum mode = withPoints ? GL_POINTS: GL_TRIANGLE_STRIP;  
-  vec4 clr = withPoints ? vec4(1,1,1,1): m_color;
-	prog->setUniformValue("vColor", clr);
-	prog->setUniformValue("vSColor", m_spec_color);
-	glDrawArrays(mode, 0, 4);
-	m_vao->release();
+  if (m_firstDraw) {
+    setupVAO(prog);
+    m_firstDraw = false;
+  }
+  m_vao->bind();
+  GLenum mode = withPoints ? GL_POINTS : GL_TRIANGLE_STRIP;
+  vec4 clr = withPoints ? vec4(1, 1, 1, 1) : m_color;
+  prog->setUniformValue("vColor", clr);
+  prog->setUniformValue("vSColor", m_spec_color);
+  glDrawArrays(mode, 0, 4);
+  m_vao->release();
 }

@@ -54,18 +54,18 @@ void MyPanelOpenGL::initializeGL() {
 void MyPanelOpenGL::resizeGL(int w, int h) { glViewport(0, 0, w, h); }
 
 void MyPanelOpenGL::paintGL() {
- 
-	setModes(); /* clear, set poly mode, culling */
 
-   drawScene(SHAPE_PROG);
-	 if(m_drawNormals){
-		 drawScene(NORMAL_PROG);
-	}
+  setModes(); /* clear, set poly mode, culling */
+
+  drawScene(SHAPE_PROG);
+  if (m_drawNormals) {
+    drawScene(NORMAL_PROG);
+  }
   glFlush();
 }
 
-void MyPanelOpenGL::setModes(){
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void MyPanelOpenGL::setModes() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   updatePolyMode(m_polymode);
   if (m_cull) {
@@ -75,7 +75,7 @@ void MyPanelOpenGL::setModes(){
   }
 }
 
-void MyPanelOpenGL::setUniforms(int prog){
+void MyPanelOpenGL::setUniforms(int prog) {
   m_shaderPrograms[prog]->bind();
   m_shaderPrograms[prog]->setUniformValue("projection", m_projection);
   m_shaderPrograms[prog]->setUniformValue("camera", m_camera);
@@ -84,56 +84,55 @@ void MyPanelOpenGL::setUniforms(int prog){
   updateModel(prog);
 }
 
-void MyPanelOpenGL::updateModel(int prog){
-	m_shaderPrograms[prog]->setUniformValue("model", m_model);
+void MyPanelOpenGL::updateModel(int prog) {
+  m_shaderPrograms[prog]->setUniformValue("model", m_model);
   mat4 mview = m_camera * m_model;
   m_shaderPrograms[prog]->setUniformValue("modelView", mview);
-  m_shaderPrograms[prog]->setUniformValue("normalMatrix",
-                                                 mview.normalMatrix());
+  m_shaderPrograms[prog]->setUniformValue("normalMatrix", mview.normalMatrix());
 }
 
-void MyPanelOpenGL::drawScene(int prog){
+void MyPanelOpenGL::drawScene(int prog) {
 
-   if (!m_shaderPrograms[prog]) { return; }
-   setUniforms(prog);
+  if (!m_shaderPrograms[prog]) {
+    return;
+  }
+  setUniforms(prog);
 
-	/* draw geometry as points? */
-	bool withPoints = (prog==NORMAL_PROG);
+  /* draw geometry as points? */
+  bool withPoints = (prog == NORMAL_PROG);
 
-	m_stack.push();
-	/*global transforms */
-	
-	if (m_drawSphere) {
-		m_stack.push();
-		/*sphere transforms */
-	  m_model=m_stack.top();
+  m_stack.push();
+  /*global transforms */
+
+  if (m_drawSphere) {
+    m_stack.push();
+    /*sphere transforms */
+    m_model = m_stack.top();
     updateModel(prog);
     m_sphere->draw(m_shaderPrograms[prog], withPoints);
-		m_stack.pop();
-	}
-	
-	m_stack.push();
-	/*square transforms */
-	m_stack.rotate(m_angles.y(), vec3(0,1,0));
-	m_model=m_stack.top();
+    m_stack.pop();
+  }
+
+  m_stack.push();
+  /*square transforms */
+  m_stack.rotate(m_angles.y(), vec3(0, 1, 0));
+  m_model = m_stack.top();
   updateModel(prog);
-	m_square->draw(m_shaderPrograms[prog], withPoints);
-	m_stack.pop();
+  m_square->draw(m_shaderPrograms[prog], withPoints);
+  m_stack.pop();
 
-	m_stack.pop();
-
+  m_stack.pop();
 }
 
 void MyPanelOpenGL::drawSquare(float yangle, bool withPoints) {
   m_model.setToIdentity();
   m_model.rotate(yangle, vec3(0, 1, 0));
   mat4 mview = m_camera * m_model;
-	int prog = withPoints ? NORMAL_PROG : SHAPE_PROG;
+  int prog = withPoints ? NORMAL_PROG : SHAPE_PROG;
   m_shaderPrograms[prog]->setUniformValue("model", m_model);
   m_shaderPrograms[prog]->setUniformValue("modelView", mview);
-  m_shaderPrograms[prog]->setUniformValue("normalMatrix",
-                                                 mview.normalMatrix());
-	m_square->draw(m_shaderPrograms[prog], withPoints);
+  m_shaderPrograms[prog]->setUniformValue("normalMatrix", mview.normalMatrix());
+  m_square->draw(m_shaderPrograms[prog], withPoints);
   m_model.setToIdentity();
 }
 
@@ -214,8 +213,8 @@ void MyPanelOpenGL::updatePolyMode(int val) {
   }
 }
 
-void MyPanelOpenGL::createShaders(int i, 
-		QString vertName, QString fragName, QString geomName) {
+void MyPanelOpenGL::createShaders(int i, QString vertName, QString fragName,
+                                  QString geomName) {
 
   cout << "building shader " << i << endl;
   destroyShaders(i); // get rid of any old shaders
@@ -229,35 +228,35 @@ void MyPanelOpenGL::createShaders(int i,
     qWarning() << m_fragmentShaders[i]->log();
   }
 
-	if (geomName.length() > 1){
-		m_geometryShaders[i] = new QOpenGLShader(QOpenGLShader::Geometry);
-		if (!m_geometryShaders[i]->compileSourceFile(geomName)) {
-			qWarning() << m_geometryShaders[i]->log();
-		}
-	}
+  if (geomName.length() > 1) {
+    m_geometryShaders[i] = new QOpenGLShader(QOpenGLShader::Geometry);
+    if (!m_geometryShaders[i]->compileSourceFile(geomName)) {
+      qWarning() << m_geometryShaders[i]->log();
+    }
+  }
 
-	m_shaderPrograms[i] = new QOpenGLShaderProgram();
-	m_shaderPrograms[i]->addShader(m_vertexShaders[i]);
-	m_shaderPrograms[i]->addShader(m_fragmentShaders[i]);
-	if (m_geometryShaders[i] !=NULL ){
-	m_shaderPrograms[i]->addShader(m_geometryShaders[i]);
-	}
-	if (!m_shaderPrograms[i]->link()) {
-		qWarning() << m_shaderPrograms[i]->log() << endl;
-	}
+  m_shaderPrograms[i] = new QOpenGLShaderProgram();
+  m_shaderPrograms[i]->addShader(m_vertexShaders[i]);
+  m_shaderPrograms[i]->addShader(m_fragmentShaders[i]);
+  if (m_geometryShaders[i] != NULL) {
+    m_shaderPrograms[i]->addShader(m_geometryShaders[i]);
+  }
+  if (!m_shaderPrograms[i]->link()) {
+    qWarning() << m_shaderPrograms[i]->log() << endl;
+  }
 }
 
 void MyPanelOpenGL::destroyShaders(int i) {
-	delete m_vertexShaders[i];
-	m_vertexShaders[i] = NULL;
-	delete m_fragmentShaders[i];
-	m_fragmentShaders[i] = NULL;
-	delete m_geometryShaders[i];
-	m_geometryShaders[i] = NULL;
+  delete m_vertexShaders[i];
+  m_vertexShaders[i] = NULL;
+  delete m_fragmentShaders[i];
+  m_fragmentShaders[i] = NULL;
+  delete m_geometryShaders[i];
+  m_geometryShaders[i] = NULL;
 
-	if (m_shaderPrograms[i]) {
-		m_shaderPrograms[i]->release();
-		delete m_shaderPrograms[i];
-		m_shaderPrograms[i] = NULL;
-	}
+  if (m_shaderPrograms[i]) {
+    m_shaderPrograms[i]->release();
+    delete m_shaderPrograms[i];
+    m_shaderPrograms[i] = NULL;
+  }
 }

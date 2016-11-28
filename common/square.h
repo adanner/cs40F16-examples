@@ -19,7 +19,7 @@ public:
   ~Square();
 
   /* draw the square using provided shader program  */
-  void draw(QOpenGLShaderProgram *prog, bool points=false);
+  void draw(QOpenGLShaderProgram *prog, bool points = false);
 
   /* Set ambient and diffuse color of Square */
   inline void setColor(const vec3 &color) {
@@ -42,7 +42,7 @@ private:
    * Return true if generate was a success, false otherwise
    */
   bool initVBO();
-	/* setUp VAO once on firstDraw */
+  /* setUp VAO once on firstDraw */
   void setupVAO(QOpenGLShaderProgram *prog);
 
 protected:
@@ -51,7 +51,7 @@ protected:
   QOpenGLVertexArrayObject *m_vao;
   QOpenGLBuffer *m_vbo;
   float m_width;
-	bool m_firstDraw;
+  bool m_firstDraw;
 };
 
 } // namespace
