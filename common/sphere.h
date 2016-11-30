@@ -9,6 +9,9 @@ typedef QVector4D vec4;
 
 namespace cs40 {
 
+typedef QVector2D vec2;
+typedef QVector3D vec3;
+typedef QVector4D vec4;
 
 class Sphere {
 public:
